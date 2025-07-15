@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 class DioHelper {
   static final _dio = Dio(
       BaseOptions(
@@ -41,7 +40,7 @@ class DioHelper {
       return CustomResponse(
         isSuccess: false,
         data: ex.response?.data,
-        msg: ex.error.toString(),
+        msg: 'حدث خطأ أثناء تحميل البيانات. تأكد من الاتصال بالإنترنت.'
       );
     }
   }  static Future<CustomResponse> put(String path,
@@ -56,7 +55,7 @@ class DioHelper {
       return CustomResponse(
         isSuccess: false,
         data: ex.response?.data,
-        msg: ex.error.toString(),
+          msg: 'حدث خطأ أثناء تحميل البيانات. تأكد من الاتصال بالإنترنت.'
       );
     }
   }  static Future<CustomResponse> delete(String path,
@@ -71,7 +70,7 @@ class DioHelper {
       return CustomResponse(
         isSuccess: false,
         data: ex.response?.data,
-        msg: ex.error.toString(),
+          msg: 'حدث خطأ أثناء تحميل البيانات. تأكد من الاتصال بالإنترنت.'
       );
     }
   }

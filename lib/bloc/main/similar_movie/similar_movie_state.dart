@@ -4,7 +4,7 @@ part of 'similar_movie_bloc.dart';
 class SimilarMovieStates{}
 class SimilarMovieLoadingState extends SimilarMovieStates{}
 class SimilarMovieSuccessState extends SimilarMovieStates{
-  final List<SimilarMovieModel> list;
+  final List<MovieModel> list;
 
   SimilarMovieSuccessState({required this.list});
 }
