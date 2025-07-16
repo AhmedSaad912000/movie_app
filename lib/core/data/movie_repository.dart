@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:movie_app/core/util/dio_helper.dart';
 import 'package:movie_app/models/popular_movies_model.dart';
+import 'package:movie_app/models/similar_movie_model.dart';
 import 'package:movie_app/models/top_rated_movie_model.dart';
 import 'package:movie_app/models/upcoming_movies_model.dart';
 import 'package:movie_app/models/show_favorite_movies_model.dart';
@@ -9,11 +10,12 @@ import '../../local_provider/hive_cache_helper.dart';
 import '../../models/movie_hive_model.dart';
 import '../error/app_exception.dart';
 import 'movie_repository_base.dart';
+
 enum MovieType { popular, upcoming, topRated }
 
 class MovieRepositoryImpl implements MovieRepositoryBase {
   // ⭐ 1. Fetch movies with caching
-  Future<List<MovieModel>> fetchMovies(MovieType type,{int page = 1}) async {
+  Future<List<MovieModel>> fetchMovies(MovieType type, {int page = 1}) async {
     final config = _getConfig(type);
 
     final cached = await HiveCacheHelper.getCachedMovies(config.boxName);
@@ -22,8 +24,10 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
       return cached;
     }
 
-    final response = await DioHelper.get(config.endpoint,data: {
-    'page': page},);
+    final response = await DioHelper.get(
+      config.endpoint,
+      data: {'page': page},
+    );
     if (response.isSuccess) {
       final list = config.extractList(response.data);
       await HiveCacheHelper.cacheMovies(config.boxName, list);
@@ -86,21 +90,13 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
     }
   }
 
-  // ⭐ 4. Get similar movies with caching
+  // ⭐ 4. Get similar movies (no caching)
   Future<List<MovieModel>> getSimilarMovies(int movieId) async {
-    final box = await Hive.openBox<List<MovieModel>>('similar_movies_box');
-    final key = 'similar_$movieId';
-
-    final cached = box.get(key);
-    if (cached != null) {
-      return cached;
-    }
-
     final response = await DioHelper.get('movie/$movieId/similar');
     if (response.isSuccess) {
-      final list = PopularMoviesData.fromJson(response.data).list;
-      await box.put(key, list);
-      print("🌐 Similar movies from API");
+      final List<MovieModel> list = List<MovieModel>.from(
+          (response.data['results'] as List)
+              .map((e) => SimilarMovieModel.fromJson(e)));
       return list;
     } else {
       throw AppException(response.msg);

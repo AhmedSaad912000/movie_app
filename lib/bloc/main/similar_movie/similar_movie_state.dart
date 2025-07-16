@@ -5,7 +5,6 @@ class SimilarMovieStates{}
 class SimilarMovieLoadingState extends SimilarMovieStates{}
 class SimilarMovieSuccessState extends SimilarMovieStates{
   final List<MovieModel> list;
-
   SimilarMovieSuccessState({required this.list});
 }
 class SimilarMovieFailedState extends SimilarMovieStates{

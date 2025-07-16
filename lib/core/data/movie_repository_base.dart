@@ -1,3 +1,5 @@
+import 'package:movie_app/models/similar_movie_model.dart';
+
 import '../../models/details_movie_model.dart';
 import '../../models/movie_hive_model.dart';
 import '../../models/show_favorite_movies_model.dart';
