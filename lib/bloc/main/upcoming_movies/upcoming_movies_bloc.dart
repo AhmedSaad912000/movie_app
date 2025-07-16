@@ -20,7 +20,7 @@ class UpcomingMovieBloc extends Bloc<UpComingEvents, UpComingStates> {
     page = 1;
     isFetching = true;
     try {
-      final movies = await repository.fetchMovies(MovieType.upcoming, page: page); // ✅ صحح النوع
+      final movies = await repository.fetchMovies(MovieType.upcoming, page: page);
       page++;
       emit(UpComingSuccessState(list: movies, hasReachedMax: movies.length < limit));
     } catch (ex) {
@@ -33,7 +33,7 @@ class UpcomingMovieBloc extends Bloc<UpComingEvents, UpComingStates> {
     if (isFetching) return;
     isFetching = true;
     try {
-      final movies = await repository.fetchMovies(MovieType.upcoming, page: page); // ✅ صحح النوع
+      final movies = await repository.fetchMovies(MovieType.upcoming, page: page);
       page++;
       final currentState = state;
       if (currentState is UpComingSuccessState) {

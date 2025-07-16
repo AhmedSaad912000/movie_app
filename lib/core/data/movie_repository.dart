@@ -10,7 +10,6 @@ import '../../local_provider/hive_cache_helper.dart';
 import '../../models/movie_hive_model.dart';
 import '../error/app_exception.dart';
 import 'movie_repository_base.dart';
-
 enum MovieType { popular, upcoming, topRated }
 
 class MovieRepositoryImpl implements MovieRepositoryBase {
@@ -18,9 +17,9 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
   Future<List<MovieModel>> fetchMovies(MovieType type, {int page = 1}) async {
     final config = _getConfig(type);
 
-    final cached = await HiveCacheHelper.getCachedMovies(config.boxName);
+    final cached = await HiveCacheHelper.getCachedMovies(boxName: config.boxName);
     if (cached != null) {
-      print("✅ Fetched from cache");
+      print(" Fetched from cache");
       return cached;
     }
 
@@ -30,11 +29,11 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
     );
     if (response.isSuccess) {
       final list = config.extractList(response.data);
-      await HiveCacheHelper.cacheMovies(config.boxName, list);
-      print("🌐 Fetched from API and cached");
+      await HiveCacheHelper.cacheMovies( boxName: config.boxName,movies:  list);
+      print("🌐 Fetched from API ");
       return list;
     } else {
-      throw AppException(response.msg);
+      throw AppException(message: response.msg);
     }
   }
 
@@ -75,7 +74,7 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
     if (response.isSuccess) {
       return config.extractList(response.data);
     } else {
-      throw AppException('فشل في تحميل أفلام النوع');
+      throw AppException(message: 'فشل في تحميل أفلام النوع');
     }
   }
 
@@ -86,7 +85,7 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
     if (response.isSuccess) {
       return DetailsMovieData.fromJson(response.data);
     } else {
-      throw AppException(response.msg);
+      throw AppException(message: response.msg);
     }
   }
 
@@ -99,7 +98,7 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
               .map((e) => SimilarMovieModel.fromJson(e)));
       return list;
     } else {
-      throw AppException(response.msg);
+      throw AppException(message: response.msg);
     }
   }
 
@@ -139,7 +138,7 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
     if (response.isSuccess) {
       return true;
     } else {
-      throw AppException(response.msg);
+      throw AppException(message: response.msg);
     }
   }
 
@@ -150,7 +149,7 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
       final model = ShowFavoriteMoviesData.fromJson(response.data);
       return model.list;
     } else {
-      throw AppException(response.msg);
+      throw AppException(message: response.msg);
     }
   }
 }

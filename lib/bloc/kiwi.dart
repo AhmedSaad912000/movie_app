@@ -14,14 +14,14 @@ import 'main/upcoming_movies/upcoming_movies_bloc.dart';
 void initKiwi() {
   final container = KiwiContainer();
 
-  container.registerFactory<MovieRepositoryBase>((c) => MovieRepositoryImpl());
+  container.registerFactory<MovieRepositoryBase>((container) => MovieRepositoryImpl());
 
-  container.registerFactory((c) => PoplarMoviesBloc());
-  container.registerFactory((c) => UpcomingMovieBloc(repository: c<MovieRepositoryBase>()));
-  container.registerFactory((c) => TopRatedMovieBloc(repository: c<MovieRepositoryBase>()));
-  container.registerFactory((c) => DetailsMoviesBloc(movieRepository: c<MovieRepositoryBase>()));
-  container.registerFactory((c) => SimilarMovieBloc(movieRepository: c<MovieRepositoryBase>()));
-  container.registerFactory((c) => AddFavoriteMoviesBloc(movieRepository: c<MovieRepositoryBase>()));
-  container.registerSingleton((c) => ShowFavoriteMoviesBloc(movieRepository: c<MovieRepositoryBase>()));
-  container.registerSingleton((c) => GenresMoviesBloc());
+  container.registerFactory((container) => PoplarMoviesBloc());
+  container.registerFactory((container) => UpcomingMovieBloc(repository: container<MovieRepositoryBase>()));
+  container.registerFactory((container) => TopRatedMovieBloc(repository: container<MovieRepositoryBase>()));
+  container.registerFactory((container) => DetailsMoviesBloc(movieRepository: container<MovieRepositoryBase>()));
+  container.registerFactory((container) => SimilarMovieBloc(movieRepository: container<MovieRepositoryBase>()));
+  container.registerFactory((container) => AddFavoriteMoviesBloc(movieRepository: container<MovieRepositoryBase>()));
+  container.registerSingleton((container) => ShowFavoriteMoviesBloc(movieRepository: container<MovieRepositoryBase>()));
+  container.registerSingleton((container) => GenresMoviesBloc());
 }

@@ -18,7 +18,7 @@ class MovieModel extends HiveObject {
   final String backdropPath;
 
   @HiveField(5)
-  final List<int> genreIds; // ✅ مش List<dynamic>
+  final List<int> genreIds;
 
   MovieModel({
     required this.id,

@@ -6,7 +6,7 @@ class HiveCacheHelper{
   static Future<Box<MovieListCacheModel>>openBox(String boxName)async{
     return await Hive.openBox<MovieListCacheModel>(boxName);
   }
-  static Future<void> cacheMovies(String boxName, List<MovieModel> movies) async {
+  static Future<void> cacheMovies({required  String boxName,required List<MovieModel> movies}) async {
     final box = await openBox(boxName);
     final data = MovieListCacheModel(
       movies: movies,
@@ -14,7 +14,7 @@ class HiveCacheHelper{
     );
     await box.put('data', data);
   }
-  static Future<List<MovieModel>?> getCachedMovies(String boxName) async {
+  static Future<List<MovieModel>?> getCachedMovies({required String boxName}) async {
     final box = await openBox(boxName);
     final data = box.get('data');
 
