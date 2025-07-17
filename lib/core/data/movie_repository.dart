@@ -17,7 +17,9 @@ class MovieRepositoryImpl implements MovieRepositoryBase {
   Future<List<MovieModel>> fetchMovies(MovieType type, {int page = 1}) async {
     final config = _getConfig(type);
 
-    final cached = await HiveCacheHelper.getCachedMovies(boxName: config.boxName);
+    final cached = page == 1
+        ? await HiveCacheHelper.getCachedMovies(boxName: config.boxName)
+        : null;
     if (cached != null) {
       print(" Fetched from cache");
       return cached;

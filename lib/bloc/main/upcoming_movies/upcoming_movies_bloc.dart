@@ -10,6 +10,7 @@ class UpcomingMovieBloc extends Bloc<UpComingEvents, UpComingStates> {
   int page = 1;
   final int limit = 20;
   bool isFetching = false;
+  final List<MovieModel> _allFetchedMovies = [];
   UpcomingMovieBloc({required this.repository}) : super(UpComingStates()) {
     on<RefreshUpcomingEvent>(_refreshUpComingMovies);
     on<UpComingEvent>(_getUpComingMovies);
