@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:movie_app/core/data/kiwi.dart';
 import 'package:movie_app/core/util/helper_methods.dart';
-import 'package:movie_app/views/main/home/view.dart';
-import 'bloc/kiwi.dart';
-import 'models/movie_hive_model.dart';
-import 'models/movie_list_cache_model.dart';
+import 'package:movie_app/features/home/view.dart';
+import 'local_provider/movie_hive_model.dart';
+import 'local_provider/movie_list_cache_model.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();

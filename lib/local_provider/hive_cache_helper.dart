@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
-import '../models/movie_hive_model.dart';
-import '../models/movie_list_cache_model.dart';
+import 'movie_hive_model.dart';
+import 'movie_list_cache_model.dart';
 class HiveCacheHelper{
   static const Duration cacheDuration=Duration(minutes: 5);
   static Future<Box<MovieListCacheModel>>openBox(String boxName)async{
