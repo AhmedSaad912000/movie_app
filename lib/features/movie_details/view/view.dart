@@ -9,6 +9,8 @@ import 'package:movie_app/core/util/helper_methods.dart';
 import 'package:movie_app/core/widgets/app_failed.dart';
 import 'package:movie_app/core/widgets/app_loading.dart';
 import 'package:movie_app/features/home/view.dart';
+import '../../../core/widgets/internet_aware_widget.dart';
+import '../../../core/widgets/no_internet_widget.dart';
 import '../../add_favorite/view/add_favorite.dart';
 import '../../favorites/bloc/show_favorite_movies_bloc.dart';
 import '../bloc/similar_movies/similar_movie_bloc.dart';
@@ -37,178 +39,181 @@ class _DetailsMovieState extends State<DetailsMovieView> {
   final bloc = KiwiContainer().resolve<DetailsMoviesBloc>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
+    return InternetAwareWidget(
+      noInternetWidget:Scaffold(body: NoInternetWidget()),
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        leading: Row(
-          children: [
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: Row(
+            children: [
+              SizedBox(
+                width: 8.w,
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                icon: Icon(Icons.arrow_back),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.white,
+                )),
+                color: Colors.yellow,
+              ),
+            ],
+          ),
+          actions: [
+            FavoriteButton(movieId: widget.id),
             SizedBox(
-              width: 8.w,
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              icon: Icon(Icons.arrow_back),
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateColor.resolveWith(
-                (states) => Colors.white,
-              )),
-              color: Colors.yellow,
-            ),
+              width: 10,
+            )
           ],
         ),
-        actions: [
-          FavoriteButton(movieId: widget.id),
-          SizedBox(
-            width: 10,
-          )
-        ],
-      ),
-      body: BlocBuilder(
-        bloc: bloc,
-        builder: (context, state) {
-          if (state is DetailsMovieStateFailed) {
-            return AppFailed(msg: state.msg);
-          } else if (state is DetailsMovieStateSuccess) {
-            return CustomScrollView(
-              slivers: [
+        body: BlocBuilder(
+          bloc: bloc,
+          builder: (context, state) {
+            if (state is DetailsMovieStateFailed) {
+              return AppFailed(msg: state.msg);
+            } else if (state is DetailsMovieStateSuccess) {
+              return CustomScrollView(
+                slivers: [
 
-                SliverAppBar(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40.r),
-                      topRight: Radius.circular(40.r),
-                    ),
-                  ),
-                  automaticallyImplyLeading: false,
-                  expandedHeight: 250.h,
-                  backgroundColor: Colors.transparent,
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: AppImage(
-                      state.model.backdropPath,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 16.h),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[700],
+                  SliverAppBar(
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(40.r),
                         topRight: Radius.circular(40.r),
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                           ClipRRect(
-                              borderRadius: BorderRadius.circular(120.r),
-                              child: AppImage(
-                                state.model.posterPath,
-                                height: 100.h,
-                                width: 100.w,
-                              ),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    state.model.title,
-                                    style: TextStyle(
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  Container(
-                                    padding: EdgeInsets.all(6.w),
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.yellowAccent, width: 3.w),
-                                      borderRadius: BorderRadius.circular(10.r),
-                                    ),
-                                    child: Text(
-                                      state.model.genres.map((e) => e.name).join(" "),
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                  SizedBox(height: 10.h),
-                                  Text(
-                                    state.model.releaseDate,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 8.sp,
-                                        fontWeight: FontWeight.w400),
-                                  ),
-                                  Row(
-                                    children: [
-                                      RatingBar.builder(
-                                        initialRating:
-                                        normalizeRating(state.model.voteAverage / 2),
-                                        ignoreGestures: true,
-                                        allowHalfRating: true,
-                                        itemSize: 25.sp,
-                                        itemPadding: EdgeInsets.only(right: 5.w),
-                                        itemBuilder: (context, _) => const Icon(
-                                          Icons.star,
-                                          color: Colors.yellow,
-                                        ),
-                                        onRatingUpdate: (_) {},
-                                      ),
-                                      SizedBox(width: 5.w),
-                                      Text(
-                                        state.model.voteAverage.round().toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.yellow,
-                                            fontSize: 15.sp),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20.h),
-                        Text(
-                          'Overview',
-                          style: TextStyle(
-                              fontSize: 20.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 10.h),
-                        Text(
-                          state.model.overview,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(height: 30.h),
-                        SimilarMoviesSection(id: widget.id),
-                      ],
+                    automaticallyImplyLeading: false,
+                    expandedHeight: 250.h,
+                    backgroundColor: Colors.transparent,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: AppImage(
+                        state.model.backdropPath,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                )
-              ],
-            );
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 16.h),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[700],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40.r),
+                          topRight: Radius.circular(40.r),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                             ClipRRect(
+                                borderRadius: BorderRadius.circular(120.r),
+                                child: AppImage(
+                                  state.model.posterPath,
+                                  height: 100.h,
+                                  width: 100.w,
+                                ),
+                              ),
+                              SizedBox(width: 16.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      state.model.title,
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(height: 8.h),
+                                    Container(
+                                      padding: EdgeInsets.all(6.w),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.yellowAccent, width: 3.w),
+                                        borderRadius: BorderRadius.circular(10.r),
+                                      ),
+                                      child: Text(
+                                        state.model.genres.map((e) => e.name).join(" "),
+                                        style: const TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10.h),
+                                    Text(
+                                      state.model.releaseDate,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 8.sp,
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                    Row(
+                                      children: [
+                                        RatingBar.builder(
+                                          initialRating:
+                                          normalizeRating(state.model.voteAverage / 2),
+                                          ignoreGestures: true,
+                                          allowHalfRating: true,
+                                          itemSize: 25.sp,
+                                          itemPadding: EdgeInsets.only(right: 5.w),
+                                          itemBuilder: (context, _) => const Icon(
+                                            Icons.star,
+                                            color: Colors.yellow,
+                                          ),
+                                          onRatingUpdate: (_) {},
+                                        ),
+                                        SizedBox(width: 5.w),
+                                        Text(
+                                          state.model.voteAverage.round().toString(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.yellow,
+                                              fontSize: 15.sp),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20.h),
+                          Text(
+                            'Overview',
+                            style: TextStyle(
+                                fontSize: 20.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            state.model.overview,
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 30.h),
+                          SimilarMoviesSection(id: widget.id),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
 
-          } else {
-            return AppLoading();
-          }
-        },
+            } else {
+              return AppLoading();
+            }
+          },
+        ),
       ),
     );
   }

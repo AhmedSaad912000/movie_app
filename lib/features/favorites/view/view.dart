@@ -9,6 +9,8 @@ import 'package:movie_app/core/widgets/app_failed.dart';
 import 'package:movie_app/features/movie_details/view/view.dart';
 import 'package:movie_app/features/home/view.dart';
 import 'package:movie_app/features/genres/view/show_movie_sheet.dart';
+import '../../../core/widgets/internet_aware_widget.dart';
+import '../../../core/widgets/no_internet_widget.dart';
 import '../../genres/bloc/genres_movies_bloc.dart';
 import '../../../core/util/helper_methods.dart';
 import '../../../core/widgets/app_image.dart';
@@ -33,124 +35,127 @@ class _FavoriteMoviesViewState extends State<FavoriteMoviesView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Favorite',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25.sp,
-            fontWeight: FontWeight.w600,
+    return  InternetAwareWidget(
+      noInternetWidget:Scaffold(body: NoInternetWidget()),
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Favorite',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 25.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.yellow,
+            ),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateColor.resolveWith(
+              (states) => Colors.white,
+            )),
           ),
         ),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.yellow,
-          ),
-          style: ButtonStyle(
-              backgroundColor: MaterialStateColor.resolveWith(
-            (states) => Colors.white,
-          )),
-        ),
-      ),
-      body: BlocListener(
-        listener: (context, state) {
-          if (state is GenresSuccessState) {
-            genres = state.list
-                .map((movieType) =>
-                    Genre(id: movieType.id, name: movieType.name))
-                .toList();
-            setState(() {});
-          }
-        },
-        bloc: genresBloc,
-        child: BlocBuilder(
-          bloc: bloc,
-          builder: (context, state) {
-            if (state is ShowFavoriteMoviesFailedState) {
-              return AppFailed(msg: state.msg);
-            } else if (state is ShowFavoriteMoviesSuccessState) {
-              final filteredList = state.list.where((movie) {
-                final title = movie.title.toLowerCase();
-                return title.contains(_searchQuary.toLowerCase());
-              }).toList();
-              return Padding(
-                padding: EdgeInsets.all(16.r),
-                child: Column(children: [
-                  SearchAndFilterField(
-                    controller: _searcherController,
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuary = value;
-                      });
-                    },
-                    genres: genres,
-                    selectedGenreName: selectedGenre?.name,
-                    onSelectedGenre: (genre) {
-                      setState(() {
-                        selectedGenre = genre;
-                      });
-                      bloc.add(FilterShowFavoriteMoviesByGenreEvent(genreId: genre.id));
-                    },
-                  ),
-                  SizedBox(
-                    height: 10.h,
-                  ),
-                  Expanded(
-                    child: filteredList.isNotEmpty
-                        ? GridView.builder(
-                            itemCount: filteredList.length,
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 8.h,
-                                    crossAxisSpacing: 16.w),
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  navigateTo(DetailsMovieView(
-                                      id: filteredList[index].id));
-                                },
-                                child: AppImage(
-                                  filteredList[index].posterPath,
-                                  fit: BoxFit.fill,
-                                ),
-                              );
-                            })
-                        : Center(
-                            child: Column(
-                              children: [
-                                SizedBox(
-                                  height: 50.h,
-                                ),
-                                Lottie.asset(
-                                  "assets/lottie/movie_not_found.json",
-                                ),
-                                SizedBox(
-                                  height: 16.h,
-                                ),
-                                Text(
-                                  " Not Found",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30.sp),
-                                ),
-                              ],
-                            ),
-                          ),
-                  )
-                ]),
-              );
-            } else {
-              return AppLoading();
+        body: BlocListener(
+          listener: (context, state) {
+            if (state is GenresSuccessState) {
+              genres = state.list
+                  .map((movieType) =>
+                      Genre(id: movieType.id, name: movieType.name))
+                  .toList();
+              setState(() {});
             }
           },
+          bloc: genresBloc,
+          child: BlocBuilder(
+            bloc: bloc,
+            builder: (context, state) {
+              if (state is ShowFavoriteMoviesFailedState) {
+                return AppFailed(msg: state.msg);
+              } else if (state is ShowFavoriteMoviesSuccessState) {
+                final filteredList = state.list.where((movie) {
+                  final title = movie.title.toLowerCase();
+                  return title.contains(_searchQuary.toLowerCase());
+                }).toList();
+                return Padding(
+                  padding: EdgeInsets.all(16.r),
+                  child: Column(children: [
+                    SearchAndFilterField(
+                      controller: _searcherController,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuary = value;
+                        });
+                      },
+                      genres: genres,
+                      selectedGenreName: selectedGenre?.name,
+                      onSelectedGenre: (genre) {
+                        setState(() {
+                          selectedGenre = genre;
+                        });
+                        bloc.add(FilterShowFavoriteMoviesByGenreEvent(genreId: genre.id));
+                      },
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Expanded(
+                      child: filteredList.isNotEmpty
+                          ? GridView.builder(
+                              itemCount: filteredList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 8.h,
+                                      crossAxisSpacing: 16.w),
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    navigateTo(DetailsMovieView(
+                                        id: filteredList[index].id));
+                                  },
+                                  child: AppImage(
+                                    filteredList[index].posterPath,
+                                    fit: BoxFit.fill,
+                                  ),
+                                );
+                              })
+                          : Center(
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    height: 50.h,
+                                  ),
+                                  Lottie.asset(
+                                    "assets/lottie/movie_not_found.json",
+                                  ),
+                                  SizedBox(
+                                    height: 16.h,
+                                  ),
+                                  Text(
+                                    " Not Found",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30.sp),
+                                  ),
+                                ],
+                              ),
+                            ),
+                    )
+                  ]),
+                );
+              } else {
+                return AppLoading();
+              }
+            },
+          ),
         ),
       ),
     );
