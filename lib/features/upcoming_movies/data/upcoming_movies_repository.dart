@@ -1,6 +1,7 @@
 import 'package:movie_app/core/data/dio_helper.dart';
 import 'package:movie_app/features/upcoming_movies/data/upcoming_movies_repo_base.dart';
 import 'package:hive/hive.dart';
+import '../../../core/widgets/app_exception.dart';
 import '../../../local_provider/movie_hive_model.dart';
 
 class UpcomingMoviesRepoImpl implements UpcomingMoviesRepo {
@@ -15,9 +16,13 @@ class UpcomingMoviesRepoImpl implements UpcomingMoviesRepo {
 
   @override
   Future<List<MovieModel>> fetchUpcomingMovies({int page = 1}) async {
-    final response = await DioHelper.get('/movie/upcoming', data: {'page': page});
-    final results = response.data['results'] as List;
-    return results.map((json) => MovieModel.fromJson(json)).toList();
+    try {
+      final response = await DioHelper.get('/movie/upcoming', data: {'page': page});
+      final results = response.data['results'] as List;
+      return results.map((json) => MovieModel.fromJson(json)).toList();
+    } catch (error) {
+      throw AppException( 'فشل في تحميل أفلام قادمة. تأكد من الاتصال بالإنترنت.');
+    }
   }
 
   @override

@@ -24,7 +24,7 @@ class DetailsMoviesBloc extends Bloc<DetailsMoviesEvents, DetailsMoviesStates> {
     } on AppException catch (e) {
       emit(DetailsMovieStateFailed(msg: e.message));
     } catch (ex) {
-      emit(DetailsMovieStateFailed(msg: ex.toString()));
+      emit(DetailsMovieStateFailed(msg: "حدث خطأ أثناء تحميل تفاصيل الفيلم. حاول لاحقًا."));
     }
   }
 }

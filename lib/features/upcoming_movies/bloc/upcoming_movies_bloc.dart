@@ -24,7 +24,7 @@ class UpcomingMovieBloc extends Bloc<UpComingEvents, UpComingStates> {
       page++;
       emit(UpComingSuccessState(list: movies, hasReachedMax: movies.length < limit));
     } catch (ex) {
-      emit(UpComingErrorState(msg: ex.toString()));
+      emit(UpComingErrorState(msg: "حدث خطأ أثناء تحميل الأفلام. حاول مرة أخرى لاحقًا."));
     }
     isFetching = false;
   }

@@ -26,7 +26,7 @@ class AddFavoriteRepository implements AddFavoriteMoviesRepositoryBase {
     if (response.isSuccess) {
       return true;
     } else {
-      throw AppException(message: response.msg);
+      throw AppException(response.msg);
     }
   }
 

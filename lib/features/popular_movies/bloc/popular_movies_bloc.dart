@@ -17,7 +17,7 @@ class PoplarMoviesBloc extends Bloc<PopularMovieEvents, PopularMoviesStates> {
         final movies = await repository.fetchPopularMovies();
         emit(PopularSuccessState(list: movies.cast<MovieModel>()));
       } catch (e) {
-        emit(PopularFailedState(msg: e.toString()));
+        emit(PopularFailedState(msg: "حدث خطأ أثناء تحميل الأفلام. حاول مرة أخرى لاحقًا."));
       }
     });
 

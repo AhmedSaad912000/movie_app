@@ -1,6 +1,7 @@
 import 'package:movie_app/core/data/dio_helper.dart';
 import 'package:movie_app/features/popular_movies/data/popular_movies_repo_base.dart';
 import 'package:hive/hive.dart';
+import '../../../core/widgets/app_exception.dart';
 import '../../../local_provider/movie_hive_model.dart';
 
 class PopularMoviesRepoImpl implements PopularMoviesRepo {
@@ -15,9 +16,14 @@ class PopularMoviesRepoImpl implements PopularMoviesRepo {
 
   @override
   Future<List<MovieModel>> fetchPopularMovies({int page = 1}) async {
-    final response = await DioHelper.get('/movie/popular', data: {'page': page});
-    final results = response.data['results'] as List;
-    return results.map((json) => MovieModel.fromJson(json)).toList();
+    try{
+      final response = await DioHelper.get('/movie/popular', data: {'page': page});
+      final results = response.data['results'] as List;
+      return results.map((json) => MovieModel.fromJson(json)).toList();
+    }catch (error) {
+      throw AppException("فشل في تحميل أفلام قادمة. تأكد من الاتصال بالإنترنت.");
+    }
+
   }
 
   @override

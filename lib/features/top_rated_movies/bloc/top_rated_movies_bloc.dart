@@ -45,7 +45,7 @@ class TopRatedMovieBloc extends Bloc<TopRatedEvents, TopRatedStates> {
         emit(TopRatedSuccessState(list: movies, hasReachedMax: movies.length < limit));
       }
     } catch (ex) {
-      emit(TopRatedFailedState(msg: ex.toString()));
+      emit(TopRatedFailedState(msg: "حدث خطأ أثناء تحميل الأفلام. حاول مرة أخرى لاحقًا."));
     }
      isFetching = false;
   }

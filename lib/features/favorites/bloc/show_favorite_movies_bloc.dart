@@ -28,7 +28,7 @@ class ShowFavoriteMoviesBloc extends Bloc<ShowFavoriteMoviesEvents, ShowFavorite
     } on AppException catch (e) {
       emit(ShowFavoriteMoviesFailedState(msg: e.message));
     } catch (ex) {
-      emit(ShowFavoriteMoviesFailedState(msg: ex.toString()));
+      emit(ShowFavoriteMoviesFailedState(msg: "حدث خطأ غير متوقع أثناء جلب الأفلام المفضلة."));
     }
   }
 

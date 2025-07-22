@@ -14,20 +14,28 @@ class MovieDetailsRepository implements MovieDetailsRepo {
     if (response.isSuccess) {
       return DetailsMovieData.fromJson(response.data);
     } else {
-      throw AppException(message: response.msg);
+      throw AppException( response.msg);
     }
   }
 
   @override
+  @override
   Future<List<MovieModel>> fetchSimilarMovies(int movieId) async {
-    final response = await DioHelper.get('movie/$movieId/similar');
+    try {
+      final response = await DioHelper.get('movie/$movieId/similar');
 
-    if (response.isSuccess) {
-      return (response.data['results'] as List)
-          .map((e) => SimilarMovieModel.fromJson(e))
-          .toList();
-    } else {
-      throw AppException(message: response.msg);
+      if (response.isSuccess) {
+        final results = response.data['results'];
+        if (results is List) {
+          return results.map((e) => SimilarMovieModel.fromJson(e)).toList();
+        } else {
+          throw AppException("لم يتم العثور على أفلام مشابهة.");
+        }
+      } else {
+        throw AppException(response.msg);
+      }
+    } catch (e) {
+      throw AppException("حدث خطأ أثناء تحميل الأفلام المشابهة.");
     }
   }
 }

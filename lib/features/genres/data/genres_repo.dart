@@ -6,13 +6,21 @@ import 'genres_repo_base.dart';
 class GenresRepoImpl implements GenresRepo {
   @override
   Future<List<GenreMoviesData>> fetchGenres() async {
-    final response = await DioHelper.get('genre/movie/list');
+    try {
+      final response = await DioHelper.get('genre/movie/list');
 
-    if (response.isSuccess) {
-      final genresList = response.data['genres'] as List;
-      return genresList.map((json) => GenreMoviesData.fromJson(json)).toList();
-    } else {
-      throw AppException(message: response.msg);
+      if (response.isSuccess) {
+        final genresList = response.data['genres'];
+        if (genresList is List) {
+          return genresList.map((json) => GenreMoviesData.fromJson(json)).toList();
+        } else {
+          throw AppException("صيغة البيانات غير متوقعة من الخادم.");
+        }
+      } else {
+        throw AppException(response.msg);
+      }
+    } catch (e) {
+      throw AppException("فشل تحميل الأنواع. تحقق من الاتصال بالإنترنت.");
     }
   }
 }
